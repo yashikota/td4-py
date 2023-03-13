@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "td4-py"
+version = "0.1.0"
+description = "4bit CPU emulator"
+authors = ["kota <52403688+yashikota@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "td4_py"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.1.0"
+ruff = "^0.0.254"
+mypy = "^1.1.1"
+pytest = "^7.2.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
