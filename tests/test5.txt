@@ -1,0 +1,5 @@
+MOV A,B
+MOV B,A
+IN A
+IN B
+OUT B
