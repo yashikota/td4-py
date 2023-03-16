@@ -1,20 +1,22 @@
 """
-Instruction set
+instruction set
 """
 
-from enum import Enum
 
+def opcode(arg):
+    op = {
+        "MOVA": "0011",
+        "MOVB": "0111",
+        "MOVAB": "0001",
+        "MOVBA": "0100",
+        "ADDA": "0000",
+        "ADDB": "0101",
+        "INA": "0010",
+        "INB": "0110",
+        "OUT": "1011",
+        "OUTB": "1001",
+        "JMP": "1111",
+        "JNC": "1110",
+    }
 
-class Opcode(Enum):
-    MovA = 0b0011,
-    MovB = 0b0111,
-    MovAB = 0b0001,
-    MovBA = 0b0100,
-    AddA = 0b0000,
-    AddB = 0b0101,
-    InA = 0b0010,
-    InB = 0b0110,
-    OutIm = 0b1011,
-    OutB = 0b1001,
-    JmpIm = 0b1111,
-    JncIm = 0b1110
+    return op[arg]
