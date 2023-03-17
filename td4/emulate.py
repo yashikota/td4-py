@@ -24,12 +24,10 @@ class Emulator:
     def fetch(self):
         self.inst = self.im[self.pc]
         self.pc += 1
-        self.clock()
 
     def decode(self):
         self.opcode = self.inst[:4]
         self.operand = self.inst[4:]
-        print(self.opcode, ",", self.operand)
 
     def execute(self):
         pass
@@ -43,7 +41,9 @@ class Emulator:
         try:
             with open(self.file, "r") as file:
                 if file.name.endswith(".td4"):
-                    self.im, self.clk, self.beep = td4.td4_parser(file.read().splitlines())
+                    self.im, self.clk, self.beep = td4.td4_parser(
+                        file.read().splitlines()
+                    )
                 else:
                     self.im = [td4.parser(line) for line in file.read().splitlines()]
             if len(self.im) > 16:
@@ -60,11 +60,26 @@ class Emulator:
                 self.decode()
                 self.execute()
 
+                print(self.opcode, ",", self.operand)
+                self.clock()
+
     def arg_parse(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument("file", help="File to read", type=str)
-        parser.add_argument("-c", "--clock", help="Clock speed", type=str, default=str(10))
-        parser.add_argument("-b", "--beep", help="Beep", type=bool, default=False)
+        parser.add_argument(
+            "file",
+            help="File to read\nCheck https://github.com/yashikota/td4-py#support-file-format for the supported format.",
+            type=str,
+        )
+        parser.add_argument(
+            "-c",
+            "--clock",
+            help="Clock speed\nDefault 10Hz.\nAny number and manual can be specified.",
+            type=str,
+            default="10",
+        )
+        parser.add_argument(
+            "-b", "--beep", help="Beep\nDefault False.", action="store_true"
+        )
         args = parser.parse_args()
 
         return args

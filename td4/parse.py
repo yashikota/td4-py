@@ -36,8 +36,18 @@ def parser(i):
 
 
 def td4_parser(file):
-    instruction = [("".join(file[index : index + 8]))[::-1] for index in range(0, 128, 8)]
-    clock = str([i+1 for i in range(len(file)) if file[i] == "#TRUE#"][0] - 128)
+    INSTRUCTION_LENGTH = 8
+
+    instruction = [
+        ("".join(file[index : index + INSTRUCTION_LENGTH]))[::-1]
+        for index in range(0, 128, INSTRUCTION_LENGTH)
+    ]
+    if file[128] == "#TRUE#":
+        clock = "1"
+    elif file[129] == "#TRUE#":
+        clock = "10"
+    else:
+        clock = "manual"
     beep = True if file[131] == "1" else False
 
     return instruction, clock, beep
