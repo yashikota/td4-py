@@ -9,7 +9,7 @@ The original is [CPUの創りかた](https://book.mynavi.jp/ec/products/detail/i
 
 ## How to run
 
-Supports the input of files in plain text or td4 format and from stdin.  
+Supports the input of files in plain text or td4 format.  
 
 ### Input from files  
 
@@ -25,15 +25,9 @@ td4 format text.
 python3 main.py Knight2K.td4
 ```
 
-### Input from stdin  
+## Support file format
 
-```sh
-python3 main.py
-```
-
-## File format
-
-It also supports several patterns of input from plain text and stdin.  
+It also supports several patterns of input from plain text.  
 
 ### Pattern 1
 
