@@ -36,4 +36,4 @@ def output(reg_a, reg_b, c_flag, im, pc, clock, input, output, beep):
 
 
 def to_led(output):
-    return "".join([" ●" if output[i] == "1" else " ○" for i in range(4)]).lstrip()
+    return ("".join([" ●" if output[i] == "1" else " ○" for i in range(4)]) + " ").lstrip()
