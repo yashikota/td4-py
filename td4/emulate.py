@@ -49,9 +49,9 @@ class Emulator:
             case "0100":  # MOV B, A
                 self.reg_b = self.reg_a
             case "0000":  # ADD A, Im
-                pass
+                self.reg_a = self.add(self.reg_a, self.operand)
             case "0101":  # ADD B, Im
-                pass
+                self.reg_b = self.add(self.reg_b, self.operand)
             case "0010":  # IN A
                 self.reg_a = self.input
             case "0110":  # IN B
@@ -65,6 +65,14 @@ class Emulator:
             case "1110":  # JNC
                 if self.c_flag == "0":
                     self.pc = int(self.operand, 2)
+                self.c_flag = "0"
+
+    def add(self, reg, operand):
+        result = bin(int(reg, 2) + int(operand, 2))[2:].zfill(4)
+        if len(result) > 4:
+            self.c_flag = "1"
+            result = result[1:]
+        return result
 
     def emulator(self):
         args = self.arg_parse()
