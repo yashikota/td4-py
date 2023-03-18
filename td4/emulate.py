@@ -4,6 +4,7 @@ emulation TD4
 
 import td4.parse
 import td4.output
+import td4.opcode
 
 import argparse
 import time
@@ -14,6 +15,13 @@ class Emulator:
         self.inst = None  # Instruction
         self.pc = 0  # Program Counter
         self.im = list()  # Instruction Memory
+
+        self.reg_a = "0000"  # Register A
+        self.reg_b = "0000"  # Register B
+        self.c_flag = "0"  # Carry Flag
+
+        self.input = "0000"  # Input
+        self.output = "0000"  # Output
 
     def clock(self):
         if self.clk.isnumeric():
@@ -31,7 +39,32 @@ class Emulator:
         self.operand = self.inst[4:]
 
     def execute(self):
-        pass
+        match self.opcode:
+            case "0011":  # MOV A, Im
+                self.reg_a = self.operand
+            case "0111":  # MOV B, Im
+                self.reg_b = self.operand
+            case "0001":  # MOV A, B
+                self.reg_a = self.reg_b
+            case "0100":  # MOV B, A
+                self.reg_b = self.reg_a
+            case "0000":  # ADD A, Im
+                pass
+            case "0101":  # ADD B, Im
+                pass
+            case "0010":  # IN A
+                self.reg_a = self.input
+            case "0110":  # IN B
+                self.reg_b = self.input
+            case "1011":  # OUT Im
+                self.output = self.operand
+            case "1001":  # OUT B
+                self.output = self.reg_b
+            case "1111":  # JMP
+                self.pc = int(self.operand, 2)
+            case "1110":  # JNC
+                if self.c_flag == "0":
+                    self.pc = int(self.operand, 2)
 
     def emulator(self):
         args = self.arg_parse()
@@ -58,14 +91,35 @@ class Emulator:
         except ValueError:
             print("Too many instructions\nTD4 can only handle 16 instructions")
             exit(1)
-        else:
+        except KeyError:
+            print("Invalid instruction")
+            exit(1)
+
+        try:
             while self.pc < len(self.im):
-                td4.output.output(self.im, self.pc, self.clk, self.input, self.beep)
+                td4.output.output(
+                    self.reg_a,
+                    self.reg_b,
+                    self.c_flag,
+                    self.im,
+                    self.pc,
+                    self.clk,
+                    self.input,
+                    self.output,
+                    self.beep,
+                )
+
                 self.fetch()
                 self.decode()
                 self.execute()
 
                 self.clock()
+        except KeyboardInterrupt:
+            print("Finished")
+            exit(0)
+        except KeyError:
+            print("Invalid instruction")
+            exit(1)
 
     def arg_parse(self):
         parser = argparse.ArgumentParser()
