@@ -2,7 +2,8 @@
 emulation TD4
 """
 
-import td4.parse as td4
+import td4.parse
+import td4.output
 
 import argparse
 import time
@@ -35,17 +36,20 @@ class Emulator:
     def emulator(self):
         args = self.arg_parse()
         self.file = args.file
+        self.input = args.input
         self.clk = args.clock
         self.beep = args.beep
 
         try:
             with open(self.file, "r") as file:
                 if file.name.endswith(".td4"):
-                    self.im, self.clk, self.beep = td4.td4_parser(
+                    self.im, self.clk, self.beep = td4.parse.to_binary_td4(
                         file.read().splitlines()
                     )
                 else:
-                    self.im = [td4.parser(line) for line in file.read().splitlines()]
+                    self.im = [
+                        td4.parse.to_binary(line) for line in file.read().splitlines()
+                    ]
             if len(self.im) > 16:
                 raise ValueError
         except FileNotFoundError:
@@ -56,11 +60,11 @@ class Emulator:
             exit(1)
         else:
             while self.pc < len(self.im):
+                td4.output.output(self.im, self.pc, self.clk, self.input, self.beep)
                 self.fetch()
                 self.decode()
                 self.execute()
 
-                print(self.opcode, ",", self.operand)
                 self.clock()
 
     def arg_parse(self):
@@ -69,6 +73,13 @@ class Emulator:
             "file",
             help="File to read\nCheck https://github.com/yashikota/td4-py#support-file-format for the supported format.",
             type=str,
+        )
+        parser.add_argument(
+            "-i",
+            "--input",
+            help="Input\nDefault 0000.\nAny number can be specified.",
+            type=str,
+            default="0000",
         )
         parser.add_argument(
             "-c",
