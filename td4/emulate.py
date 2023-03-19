@@ -2,157 +2,101 @@
 emulation TD4
 """
 
-import td4.parse
+import td4.cpu
 import td4.output
 import td4.opcode
+import td4.parse
 
 import argparse
 import time
 
 
-class Emulator:
-    def __init__(self):
-        self.inst = None  # Instruction
-        self.pc = 0  # Program Counter
-        self.im = list()  # Instruction Memory
+def emulator():
+    # Parse arguments
+    args = arg_parse()
+    file = args.file
+    input = args.input
+    clk = args.clock
+    beep = args.beep
 
-        self.reg_a = "0000"  # Register A
-        self.reg_b = "0000"  # Register B
-        self.c_flag = "0"  # Carry Flag
+    # Initialize
+    pc = 0  # Program Counter
+    rom = list()  # ROM
+    reg_a = "0000"  # Register A
+    reg_b = "0000"  # Register B
+    c_flag = "0"  # Carry Flag
+    input = "0000"  # Input
+    output = "0000"  # Output
 
-        self.input = "0000"  # Input
-        self.output = "0000"  # Output
+    # Read file
+    try:
+        with open(file, "r") as file:
+            if file.name.endswith(".td4"):
+                rom, clk, beep = td4.parse.to_binary_td4(file.read().splitlines())
+            else:
+                rom = [td4.parse.to_binary(line) for line in file.read().splitlines()]
+        if len(rom) > 16:
+            raise ValueError
+    except FileNotFoundError:
+        print("File not found")
+        exit(1)
+    except ValueError:
+        print("Too many instructions\nTD4 can only handle 16 instructions")
+        exit(1)
+    except KeyError:
+        print("Invalid instruction")
+        exit(1)
 
-    def clock(self):
-        if self.clk.isnumeric():
-            interval = 1 / int(self.clk)
-            time.sleep(interval)
-        elif self.clk == "manual":
-            input()
+    # Emulate
+    try:
+        while pc < len(rom):
+            td4.output.output(reg_a, reg_b, c_flag, rom, pc, clk, input, output, beep)
+            inst, pc = td4.cpu.fetch(rom, pc)
+            op, im = td4.cpu.decode(inst)
+            reg_a, reg_b, c_flag, output, pc = td4.cpu.execute(
+                op, im, reg_a, reg_b, c_flag, input, output, pc
+            )
+            clock(clk)
+    except KeyboardInterrupt:
+        print("Finished")
+        exit(0)
+    except KeyError:
+        print("Invalid instruction")
+        exit(1)
 
-    def fetch(self):
-        self.inst = self.im[self.pc]
-        self.pc += 1
 
-    def decode(self):
-        self.opcode = self.inst[:4]
-        self.operand = self.inst[4:]
+def clock(clk):
+    if clk.isnumeric():
+        interval = 1 / int(clk)
+        time.sleep(interval)
+    elif clk == "manual":
+        input()
 
-    def execute(self):
-        match self.opcode:
-            case "0011":  # MOV A, Im
-                self.reg_a = self.operand
-            case "0111":  # MOV B, Im
-                self.reg_b = self.operand
-            case "0001":  # MOV A, B
-                self.reg_a = self.reg_b
-            case "0100":  # MOV B, A
-                self.reg_b = self.reg_a
-            case "0000":  # ADD A, Im
-                self.reg_a = self.add(self.reg_a, self.operand)
-            case "0101":  # ADD B, Im
-                self.reg_b = self.add(self.reg_b, self.operand)
-            case "0010":  # IN A
-                self.reg_a = self.input
-            case "0110":  # IN B
-                self.reg_b = self.input
-            case "1011":  # OUT Im
-                self.output = self.operand
-            case "1001":  # OUT B
-                self.output = self.reg_b
-            case "1111":  # JMP
-                self.pc = int(self.operand, 2)
-            case "1110":  # JNC
-                if self.c_flag == "0":
-                    self.pc = int(self.operand, 2)
-                self.c_flag = "0"
 
-    def add(self, reg, operand):
-        result = bin(int(reg, 2) + int(operand, 2))[2:].zfill(4)
-        if len(result) > 4:
-            self.c_flag = "1"
-            result = result[1:]
-        return result
+def arg_parse():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "file",
+        help="File to read\nCheck https://github.com/yashikota/td4-py#support-file-format for the supported format.",
+        type=str,
+    )
+    parser.add_argument(
+        "-i",
+        "--input",
+        help="Input\nDefault 0000.\nAny number can be specified.",
+        type=str,
+        default="0000",
+    )
+    parser.add_argument(
+        "-c",
+        "--clock",
+        help="Clock speed\nDefault 10Hz.\nAny number and manual can be specified.",
+        type=str,
+        default="10",
+    )
+    parser.add_argument(
+        "-b", "--beep", help="Beep\nDefault False.", action="store_true"
+    )
+    args = parser.parse_args()
 
-    def emulator(self):
-        args = self.arg_parse()
-        self.file = args.file
-        self.input = args.input
-        self.clk = args.clock
-        self.beep = args.beep
-
-        try:
-            with open(self.file, "r") as file:
-                if file.name.endswith(".td4"):
-                    self.im, self.clk, self.beep = td4.parse.to_binary_td4(
-                        file.read().splitlines()
-                    )
-                else:
-                    self.im = [
-                        td4.parse.to_binary(line) for line in file.read().splitlines()
-                    ]
-            if len(self.im) > 16:
-                raise ValueError
-        except FileNotFoundError:
-            print("File not found")
-            exit(1)
-        except ValueError:
-            print("Too many instructions\nTD4 can only handle 16 instructions")
-            exit(1)
-        except KeyError:
-            print("Invalid instruction")
-            exit(1)
-
-        try:
-            while self.pc < len(self.im):
-                td4.output.output(
-                    self.reg_a,
-                    self.reg_b,
-                    self.c_flag,
-                    self.im,
-                    self.pc,
-                    self.clk,
-                    self.input,
-                    self.output,
-                    self.beep,
-                )
-
-                self.fetch()
-                self.decode()
-                self.execute()
-
-                self.clock()
-        except KeyboardInterrupt:
-            print("Finished")
-            exit(0)
-        except KeyError:
-            print("Invalid instruction")
-            exit(1)
-
-    def arg_parse(self):
-        parser = argparse.ArgumentParser()
-        parser.add_argument(
-            "file",
-            help="File to read\nCheck https://github.com/yashikota/td4-py#support-file-format for the supported format.",
-            type=str,
-        )
-        parser.add_argument(
-            "-i",
-            "--input",
-            help="Input\nDefault 0000.\nAny number can be specified.",
-            type=str,
-            default="0000",
-        )
-        parser.add_argument(
-            "-c",
-            "--clock",
-            help="Clock speed\nDefault 10Hz.\nAny number and manual can be specified.",
-            type=str,
-            default="10",
-        )
-        parser.add_argument(
-            "-b", "--beep", help="Beep\nDefault False.", action="store_true"
-        )
-        args = parser.parse_args()
-
-        return args
+    return args

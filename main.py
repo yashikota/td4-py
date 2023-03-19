@@ -1,3 +1,3 @@
-from td4 import Emulator
+from td4 import emulate
 
-Emulator().emulator()
+emulate.emulator()

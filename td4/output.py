@@ -9,14 +9,13 @@ def output(reg_a, reg_b, c_flag, im, pc, clock, input, output, beep):
     print(f"Reg B\t: {reg_b}")
     print(f"C Flag\t: {c_flag}")
     print(f"PC\t: {pc}")
-
     print()
     if clock.isnumeric():
         print(f"Clock\t: {clock}Hz")
     elif clock == "manual":
         print("Clock\t: manual")
     print(f"Input\t: {input}")
-    print(f"Output\t: {output} ({to_led(output)})")
+    print(f"Output\t: {output} ({led(output)})")
     print(f"Beep\t: {beep}")
     print("=== Instruction Memory ===")
     for i, inst in enumerate(im):
@@ -35,7 +34,7 @@ def output(reg_a, reg_b, c_flag, im, pc, clock, input, output, beep):
     print("=====================")
 
 
-def to_led(output):
+def led(output):
     return (
         "".join([" ●" if output[i] == "1" else " ○" for i in range(4)]) + " "
     ).lstrip()
