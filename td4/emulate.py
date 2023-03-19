@@ -10,23 +10,20 @@ import td4.parse
 import argparse
 import time
 
-
 def emulator():
+    # Initialize
+    pc = 0  # Program Counter
+    reg_a = "0000"  # Register A
+    reg_b = "0000"  # Register B
+    c_flag = "0"  # Carry Flag
+    output = "0000"  # Output
+
     # Parse arguments
     args = arg_parse()
     file = args.file
     input = args.input
     clk = args.clock
     beep = args.beep
-
-    # Initialize
-    pc = 0  # Program Counter
-    rom = list()  # ROM
-    reg_a = "0000"  # Register A
-    reg_b = "0000"  # Register B
-    c_flag = "0"  # Carry Flag
-    input = "0000"  # Input
-    output = "0000"  # Output
 
     # Read file
     try:
@@ -49,14 +46,17 @@ def emulator():
 
     # Emulate
     try:
+        td4.output.output(reg_a, reg_b, c_flag, rom, pc, clk, input, output, beep)
         while pc < len(rom):
-            td4.output.output(reg_a, reg_b, c_flag, rom, pc, clk, input, output, beep)
             inst, pc = td4.cpu.fetch(rom, pc)
             op, im = td4.cpu.decode(inst)
             reg_a, reg_b, c_flag, output, pc = td4.cpu.execute(
                 op, im, reg_a, reg_b, c_flag, input, output, pc
             )
+            if beep and output[0] == "1":
+                print("\a")
             clock(clk)
+            td4.output.output(reg_a, reg_b, c_flag, rom, pc, clk, input, output, beep)
     except KeyboardInterrupt:
         print("Finished")
         exit(0)
