@@ -44,7 +44,7 @@ Show help message and exit.
 
 ##### example
 
-`td4 -h`
+`td4 -h`  
 
 #### input
 
@@ -53,8 +53,8 @@ Default is `0000`.
 
 ##### example
 
-`td4 -i 0000`
-`td4 --input 1111`
+`td4 -i 0000`  
+`td4 --input 1111`  
 
 #### clock
 
@@ -63,9 +63,9 @@ Default is `10`.
 
 ##### example
 
-`td4 -c 1`
-`td4 --clock 10`
-`td4 -c manual`
+`td4 -c 1`  
+`td4 --clock 10`  
+`td4 -c manual`  
 
 #### beep
 
@@ -75,8 +75,8 @@ Default is `False`.
 
 ##### example
 
-`td4 -b`
-`td4 --beep`
+`td4 -b`  
+`td4 --beep`  
 
 ## Support file format
 
