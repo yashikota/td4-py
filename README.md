@@ -3,7 +3,7 @@
 This repository is a 4bit CPU emulator written by Python.  
 The original is [CPUの創りかた](https://book.mynavi.jp/ec/products/detail/id=22065).  
 
-![example](./example.png)
+![example](https://raw.githubusercontent.com/yashikota/td4-py/master/example.png)
 
 ## features
 
