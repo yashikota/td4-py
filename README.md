@@ -3,35 +3,88 @@
 This repository is a 4bit CPU emulator written by Python.  
 The original is [CPUの創りかた](https://book.mynavi.jp/ec/products/detail/id=22065).  
 
+![example](./example.png)
+
 ## features
 
-- Input/output from plain text or td4 format files
+- Read from plain text files, td4 format files
+- Variable clock, manual clock selectable
+- Beep support
+- Runs in CLI
 
-## How to run
+## Install
 
-Supports the input of files in plain text or td4 format.  
-
-### Input from files  
-
-plain text.  
-
-```sh
-python3 main.py program.txt
-```
-
-td4 format text.  
+<https://pypi.org/project/td4>  
 
 ```sh
-python3 main.py Knight2K.td4
+pip3 install td4
 ```
+
+## Usage
+
+### args
+
+```sh
+td4 [-h] [-i INPUT] [-c CLOCK] [-b] file
+```
+
+#### file
+
+File to read.  
+Check https://github.com/yashikota/td4-py#support-file-format for the supported format.  
+
+##### example
+
+`td4 program.txt`  
+`td4 Knight2K.td4`  
+
+#### help
+
+Show help message and exit.  
+
+##### example
+
+`td4 -h`
+
+#### input
+
+Any binary can be specified.  
+Default is `0000`.  
+
+##### example
+
+`td4 -i 0000`
+`td4 --input 1111`
+
+#### clock
+
+Any number or manual can be specified.  
+Default is `10`.  
+
+##### example
+
+`td4 -c 1`
+`td4 --clock 10`
+`td4 -c manual`
+
+#### beep
+
+Specifies whether a beep is sounded.  
+Operates when the MSB of out is set to 1.  
+Default is `False`.  
+
+##### example
+
+`td4 -b`
+`td4 --beep`
 
 ## Support file format
 
-It also supports several patterns of input from plain text.  
+Input from plain text files supports several patterns.  
 
 ### Pattern 1
 
-Opcode(LowerCase) + Space + Operand  
+Opcode(Assembly LowerCase) + Space + Immediate data
 
 ```txt
 out 0011
@@ -48,7 +101,7 @@ jmp 0000
 
 ### Pattern2
 
-Opcode(UpperCase) + Space + Operand  
+Opcode(Assembly UpperCase) + Space + Immediate data  
 
 ```txt
 OUT 0111
@@ -71,7 +124,7 @@ JMP 1111
 
 ### Pattern3
 
-Opcode(binary) + Operand  
+Opcode(binary) + Immediate data  
 
 ```txt
 10110011
@@ -88,7 +141,7 @@ Opcode(binary) + Operand
 
 ### Pattern4
 
-Opcode(binary) + Space + Operand  
+Opcode(binary) + Space + Immediate data  
 
 ```txt
 1011 0011
