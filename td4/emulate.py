@@ -10,6 +10,7 @@ import td4.parse
 import argparse
 import time
 
+
 def emulator():
     # Initialize
     pc = 0  # Program Counter
@@ -24,6 +25,14 @@ def emulator():
     input = args.input
     clk = args.clock
     beep = args.beep
+
+    # Check input
+    try:
+        if len(input) != 4 or not input.isnumeric() or int(input, 2) > 15:
+            raise ValueError
+    except ValueError:
+        print("Invalid input")
+        exit(1)
 
     # Read file
     try:
@@ -74,29 +83,28 @@ def clock(clk):
 
 
 def arg_parse():
+    url = "https://github.com/yashikota/td4-py#support-file-format"
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "file",
-        help="File to read\nCheck https://github.com/yashikota/td4-py#support-file-format for the supported format.",
+        help=f"File to read\nCheck {url} for the supported format.",
         type=str,
     )
     parser.add_argument(
         "-i",
         "--input",
-        help="Input\nDefault 0000.\nAny number can be specified.",
+        help="Default 0000. Any binary can be specified.",
         type=str,
         default="0000",
     )
     parser.add_argument(
         "-c",
         "--clock",
-        help="Clock speed\nDefault 10Hz.\nAny number and manual can be specified.",
+        help="Default 10Hz. Any number and manual can be specified.",
         type=str,
         default="10",
     )
-    parser.add_argument(
-        "-b", "--beep", help="Beep\nDefault False.", action="store_true"
-    )
+    parser.add_argument("-b", "--beep", help="Default False.", action="store_true")
     args = parser.parse_args()
 
     return args

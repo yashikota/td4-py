@@ -8,7 +8,7 @@ def output(reg_a, reg_b, c_flag, im, pc, clock, input, output, beep):
     print(f"Reg A\t: {reg_a}")
     print(f"Reg B\t: {reg_b}")
     print(f"C Flag\t: {c_flag}")
-    print(f"PC\t: {pc}")
+    print(f"PC\t: {pc} ({bin(pc)[2:].zfill(4)})")
     print()
     if clock.isnumeric():
         print(f"Clock\t: {clock}Hz")
