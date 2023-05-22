@@ -3,7 +3,10 @@
 This repository is a 4bit CPU emulator written by Python.  
 The original is [CPUの創りかた](https://book.mynavi.jp/ec/products/detail/id=22065).  
 
-![example](https://raw.githubusercontent.com/yashikota/td4-py/master/example.png)
+## example
+
+![led](https://raw.githubusercontent.com/yashikota/td4-py/master/img/led.gif)  
+![ramen](https://raw.githubusercontent.com/yashikota/td4-py/master/img/ramen.gif)
 
 ## features
 
@@ -34,7 +37,7 @@ File to read.
 Check https://github.com/yashikota/td4-py#support-file-format for the supported format.  
 
 ##### example
-
+.
 `td4 program.txt`  
 `td4 Knight2K.td4`  
 
