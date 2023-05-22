@@ -5,7 +5,12 @@ The original is [CPUの創りかた](https://book.mynavi.jp/ec/products/detail/i
 
 ## example
 
+### LED
+
 ![led](https://raw.githubusercontent.com/yashikota/td4-py/master/img/led.gif)  
+
+### Ramen Timer(x10)
+
 ![ramen](https://raw.githubusercontent.com/yashikota/td4-py/master/img/ramen.gif)
 
 ## features
